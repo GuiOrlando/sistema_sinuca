@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { Home, Users, Store, Package, Settings, LogOut } from 'lucide-react'; // Ícones modernos
+import { Home, Users, Store, Package, Settings, LogOut } from 'lucide-react';
 
 export default function Sidebar() {
   const menuItems = [
     { name: 'Homepage', icon: <Home size={20} />, href: '/' },
     { name: 'Clientes', icon: <Users size={20} />, href: '/clientes' },
     { name: 'Bares', icon: <Store size={20} />, href: '/bares' },
-    { name: 'Insumos', icon: <Package size={20} />, href: '/insumos' },
+    { name: 'Materiais', icon: <Package size={20} />, href: '/insumos' },
     { name: 'Configurações', icon: <Settings size={20} />, href: '/configuracoes' },
   ];
 

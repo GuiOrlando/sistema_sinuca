@@ -5,19 +5,13 @@ require('dotenv').config();
 
 const app = express();
 
+const authRoutes = require('./routes/authRoutes');
+const estabelecimentoRoutes = require('./routes/estabelecimentoRoutes');
+
 app.use(cors());
 app.use(express.json());
-
-// Rota de teste de conexão
-app.get('/teste-db', async (req, res) => {
-    try {
-        const [rows] = await db.query('SELECT "Conexão ativa!" as status');
-        res.json({ message: "Banco de dados conectado com sucesso!", data: rows });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Erro ao conectar no banco de dados" });
-    }
-});
+app.use('/auth', authRoutes)
+app.use('/estabelecimentos', estabelecimentoRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
