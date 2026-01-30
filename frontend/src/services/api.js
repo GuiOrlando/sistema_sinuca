@@ -1,5 +1,27 @@
 const API_URL = 'http://localhost:3001';
 
+export const getDashboardStats = async () => {
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`${API_URL}/dashboard/stats`, {
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erro ao buscar estatísticas');
+        }
+        
+        return response.json();
+    } catch (error) {
+        console.error("Erro na requisição:", error);
+        throw error;
+    }
+}
+
 export const login = async (email, senha) => {
     const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',

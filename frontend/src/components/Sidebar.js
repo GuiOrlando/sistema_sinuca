@@ -1,40 +1,70 @@
+'use client';
+import { useState } from 'react';
 import Link from 'next/link';
-import { Home, Users, Store, Package, Settings, LogOut } from 'lucide-react';
+import { Home, Users, Store, Package, Settings, LogOut, Menu, X } from 'lucide-react';
 
 export default function Sidebar() {
-  const menuItems = [
-    { name: 'Homepage', icon: <Home size={20} />, href: '/' },
-    { name: 'Clientes', icon: <Users size={20} />, href: '/clientes' },
-    { name: 'Bares', icon: <Store size={20} />, href: '/bares' },
-    { name: 'Materiais', icon: <Package size={20} />, href: '/insumos' },
-    { name: 'Configurações', icon: <Settings size={20} />, href: '/configuracoes' },
-  ];
+    const [isOpen, setIsOpen] = useState(false);
+    const toggleSidebar = () => setIsOpen(!isOpen);
 
-  return (
-    <aside className="w-64 bg-card text-foreground h-screen sticky top-0 border-r border-slate-700 flex flex-col">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-accent italic">Sinuca Control</h1>
-      </div>
-      
-      <nav className="flex-1 px-4 space-y-2">
-        {menuItems.map((item) => (
-          <Link 
-            key={item.name} 
-            href={item.href}
-            className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-700 transition-colors text-slate-300 hover:text-white"
-          >
-            {item.icon}
-            <span>{item.name}</span>
-          </Link>
-        ))}
-      </nav>
+    const menuItems = [
+        { name: 'Homepage', icon: <Home size={20} />, href: '/' },
+        { name: 'Clientes', icon: <Users size={20} />, href: '/clientes' },
+        { name: 'Bares', icon: <Store size={20} />, href: '/bares' },
+        { name: 'Materiais', icon: <Package size={20} />, href: '/insumos' },
+        { name: 'Configurações', icon: <Settings size={20} />, href: '/configuracoes' },
+    ];
 
-      <div className="p-4 border-t border-slate-700">
-        <button className="flex items-center gap-3 p-3 w-full text-red-400 hover:bg-red-900/20 rounded-lg transition-colors">
-          <LogOut size={20} />
-          <span>Sair</span>
-        </button>
-      </div>
-    </aside>
-  );
+    return (
+        <>
+            <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#1e293b] border-b border-slate-700 flex items-center justify-between px-4 z-50">
+                <h1 className="text-xl font-bold text-blue-400 italic">SinuControl</h1>
+                <button 
+                    onClick={toggleSidebar}
+                    className="p-2 text-slate-300 hover:text-white"
+                >
+                    {isOpen ? <X size={28} /> : <Menu size={28} />}
+                </button>
+            </header>
+
+            {isOpen && (
+                <div 
+                    className="fixed inset-0 bg-black/60 z-[60] md:hidden backdrop-blur-sm"
+                    onClick={toggleSidebar}
+                />
+            )}
+
+            <aside className={`
+                fixed md:sticky top-0 left-0 z-[70] w-64 bg-[#1e293b] text-foreground h-screen 
+                border-r border-slate-700 flex flex-col transition-transform duration-300 ease-in-out
+                ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+            `}>
+                <div className="hidden md:block pl-6 pt-6 pb-3">
+                    <h1 className="text-2xl font-bold text-blue-400 italic">SinuControl</h1>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-">Gerenciamento Pro</p>
+                </div>
+        
+                <nav className="flex-1 px-4 space-y-2 pt-20 md:pt-0 overflow-y-auto">
+                    {menuItems.map((item) => (
+                        <Link 
+                            key={item.name} 
+                            href={item.href}
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-800 transition-all text-slate-400 hover:text-white"
+                        >
+                            <span className="text-blue-400">{item.icon}</span>
+                            <span className="font-medium">{item.name}</span>
+                        </Link>
+                    ))}
+                </nav>
+
+                <div className="p-4 border-t border-slate-800">
+                    <button className="flex items-center gap-3 p-3 w-full text-red-400 hover:bg-red-900/20 rounded-xl transition-colors">
+                        <LogOut size={20} />
+                        <span className="font-medium text-sm md:text-base">Sair</span>
+                    </button>
+                </div>
+            </aside>
+        </>
+    );
 }
