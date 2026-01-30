@@ -1,29 +1,47 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Users, DollarSign, Table as TableIcon, TrendingUp } from 'lucide-react';
-import { getDashboardStats } from '@/services/api';
+import { Users, DollarSign, Table as TableIcon, TrendingUp, Package } from 'lucide-react';
+import { getDashboardStats, getInsumos } from '@/services/api';
 
 export default function HomePage() {
     const [stats, setStats] = useState({
         totalClientes: 0,
         receitaMensal: 0,
-        totalMesas: 0
+        totalMesas: 0,
+        patrimonioInsumos: 0
     });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchStats = async () => {
+        const fetchAllData = async () => {
+            setLoading(true);
             try {
-                const data = await getDashboardStats();
-                setStats(data);
+                const [dashboardData, insumosData] = await Promise.all([
+                    getDashboardStats(),
+                    getInsumos()
+                ]);
+
+                const totalInsumos = insumosData.reduce((acc, item) => {
+                    const preco = Number(item.preco_custo) || 0;
+                    const qtd = Number(item.quantidade_estoque) || 0;
+                    return acc + (preco * qtd);
+                }, 0);
+
+                setStats({
+                    ...dashboardData,
+                    patrimonioInsumos: totalInsumos
+                });
             } catch (err) {
                 console.error("Erro ao carregar dashboard:", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchStats();
+
+        fetchAllData();
     }, []);
+
+    const receitaTotalAgregada = Number(stats.receitaMensal) + Number(stats.patrimonioInsumos);
 
     const cards = [
         { 
@@ -35,7 +53,7 @@ export default function HomePage() {
         },
         { 
             title: 'Receita Mensal', 
-            value: `R$ ${Number(stats.receitaMensal).toFixed(2)}`, 
+            value: `R$ ${receitaTotalAgregada.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 
             icon: <DollarSign size={24} />, 
             color: 'text-green-400', 
             bg: 'bg-green-500/10' 

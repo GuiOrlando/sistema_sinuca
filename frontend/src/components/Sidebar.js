@@ -11,7 +11,7 @@ export default function Sidebar() {
         { name: 'Homepage', icon: <Home size={20} />, href: '/' },
         { name: 'Clientes', icon: <Users size={20} />, href: '/clientes' },
         { name: 'Bares', icon: <Store size={20} />, href: '/bares' },
-        { name: 'Materiais', icon: <Package size={20} />, href: '/insumos' },
+        { name: 'Materiais', icon: <Package size={20} />, href: '/materiais' },
         { name: 'Configurações', icon: <Settings size={20} />, href: '/configuracoes' },
     ];
 

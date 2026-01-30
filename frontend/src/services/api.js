@@ -8,6 +8,7 @@ const getAuthHeader = () => {
     };
 };
 
+// Dashboard API functions
 export const getDashboardStats = async () => {
     try {
         const response = await fetch(`${API_URL}/dashboard/stats`, {
@@ -39,6 +40,7 @@ export const login = async (email, senha) => {
     return response.json();
 };
 
+// Estabelecimentos API functions
 export const getEstabelecimentos = async () => {
     const response = await fetch(`${API_URL}/estabelecimentos`, {
         headers: getAuthHeader(),
@@ -75,5 +77,55 @@ export const updateEstabelecimento = async (id, dados) => {
         body: JSON.stringify(dados),
     });
     if (!response.ok) throw new Error('Erro ao atualizar estabelecimento');
+    return response.json();
+};
+
+// Insumos API functions
+export const getInsumos = async () => {
+    const response = await fetch(`${API_URL}/insumos`, {
+        headers: getAuthHeader(),
+    });
+
+    if (!response.ok) throw new Error('Erro ao buscar materiais');
+    return response.json();
+};
+
+export const createInsumo = async (dados) => {
+    const response = await fetch(`${API_URL}/insumos`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify(dados),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao criar material');
+    }
+    return response.json();
+};
+
+export const deleteInsumo = async (id) => {
+    const response = await fetch(`${API_URL}/insumos/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeader(),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao excluir material');
+    }
+    return response.json();
+};
+
+export const updateInsumo = async (id, dados) => {
+    const response = await fetch(`${API_URL}/insumos/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify(dados),
+    });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao atualizar material');
+    }
     return response.json();
 };

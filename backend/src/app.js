@@ -8,6 +8,7 @@ const app = express();
 const authRoutes = require('./routes/authRoutes');
 const estabelecimentoRoutes = require('./routes/estabelecimentoRoutes');
 const dashboardRoutes = require('./routes/dashboard');
+const insumosRoutes = require('./routes/insumos');
 
 app.use(cors());
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use('/auth', authRoutes)
 app.use('/estabelecimentos', estabelecimentoRoutes);
 app.use('/dashboard', dashboardRoutes);
+app.use('/insumos', insumosRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
