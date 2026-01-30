@@ -59,7 +59,7 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="p-4 border-t border-slate-800">
-                    <button className="flex items-center gap-3 p-3 w-full text-red-400 hover:bg-red-900/20 rounded-xl transition-colors">
+                    <button className="flex items-center gap-3 p-3 w-full text-red-400 hover:bg-red-900/20 rounded-xl transition-colors cursor-pointer">
                         <LogOut size={20} />
                         <span className="font-medium text-sm md:text-base">Sair</span>
                     </button>

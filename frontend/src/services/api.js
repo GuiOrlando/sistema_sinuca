@@ -1,20 +1,23 @@
 const API_URL = 'http://localhost:3001';
 
-export const getDashboardStats = async () => {
+const getAuthHeader = () => {
     const token = localStorage.getItem('token');
+    return {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+    };
+};
+
+export const getDashboardStats = async () => {
     try {
         const response = await fetch(`${API_URL}/dashboard/stats`, {
-            headers: { 
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeader(),
         });
 
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || 'Erro ao buscar estatísticas');
         }
-        
         return response.json();
     } catch (error) {
         console.error("Erro na requisição:", error);
@@ -33,16 +36,12 @@ export const login = async (email, senha) => {
         const error = await response.json();
         throw new Error(error.error || 'Erro ao realizar login');
     }
-
     return response.json();
 };
 
 export const getEstabelecimentos = async () => {
-    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/estabelecimentos`, {
-        headers: { 
-            'Authorization': `Bearer ${token}` 
-        },
+        headers: getAuthHeader(),
     });
 
     if (!response.ok) throw new Error('Erro ao buscar estabelecimentos');
@@ -50,16 +49,31 @@ export const getEstabelecimentos = async () => {
 };
 
 export const createEstabelecimento = async (dados) => {
-    const token = localStorage.getItem('token');
     const response = await fetch(`${API_URL}/estabelecimentos`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
+        headers: getAuthHeader(),
         body: JSON.stringify(dados),
     });
 
     if (!response.ok) throw new Error('Erro ao criar estabelecimento');
     return response.json();
 }
+
+export const deleteEstabelecimento = async (id) => {
+    const response = await fetch(`${API_URL}/estabelecimentos/${id}`, {
+        method: 'DELETE',
+        headers: getAuthHeader(),
+    });
+    if (!response.ok) throw new Error('Erro ao excluir estabelecimento');
+    return response.json();
+};
+
+export const updateEstabelecimento = async (id, dados) => {
+    const response = await fetch(`${API_URL}/estabelecimentos/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify(dados),
+    });
+    if (!response.ok) throw new Error('Erro ao atualizar estabelecimento');
+    return response.json();
+};

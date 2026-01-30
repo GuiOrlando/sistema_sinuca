@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { getEstabelecimentos } from '@/services/api';
+import { getEstabelecimentos, deleteEstabelecimento } from '@/services/api';
 import ModalCadastroBar from '@/components/modal/ModalCadastroBar';
 import { Plus, Store, Phone, User, Loader2 } from 'lucide-react';
+import TableActions from '@/components/buttons/TableActions';
 
 export default function ClientesPage() {
     const [bares, setBares] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedBar, setSelectedBar] = useState(null);
 
     const fetchData = async () => {
         setLoading(true);
@@ -25,6 +27,22 @@ export default function ClientesPage() {
         fetchData(); 
     }, []);
 
+    const handleEdit = (bar) => {
+        setSelectedBar(bar);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (bar) => {
+        if (confirm(`Deseja realmente excluir o bar "${bar.nome_fantasia}"?`)) {
+            try {
+                await deleteEstabelecimento(bar.id);
+                fetchData();
+            } catch (err) {
+                alert("Erro ao excluir bar");
+            }
+        }
+    };
+
     return (
         <div className='p-4 md:p-6 pt-11 md:pt-6 min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#0f172a]'>
         
@@ -35,16 +53,19 @@ export default function ClientesPage() {
                 </div>
 
                 <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 shadow-lg shadow-blue-900/20"
+                    onClick={() => {
+                        setSelectedBar(null);
+                        setIsModalOpen(true);
+                    }}
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-blue-900/20 cursor-pointer"
                 >
                     <Plus size={20} /> 
                     <span className="font-semibold text-sm">Novo Bar</span>
                 </button>
             </div>
 
-                <div className="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">                <div className="overflow-x-auto">
-                    <div className="overflow-x-auto scroll-smooth focus:outline-none">
+            <div className="bg-[#1e293b] rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+                <div className="overflow-x-auto scroll-smooth focus:outline-none">
                     <table className="w-full text-left border-collapse min-w-[750px]">
                         <thead className="bg-slate-800/50 text-slate-300 text-[11px] md:text-xs uppercase tracking-widest border-b border-slate-700">
                             <tr>
@@ -98,15 +119,16 @@ export default function ClientesPage() {
                                     </td>
 
                                     <td className="p-5 align-middle text-center">
-                                        <button className="text-blue-400 hover:text-blue-300 text-xs md:text-sm font-bold transition-all px-4 py-2 hover:bg-blue-400/10 rounded-xl">
-                                            Editar
-                                        </button>
+                                        <TableActions 
+                                            onEdit={() => handleEdit(bar)}
+                                            onDelete={() => handleDelete(bar)}
+                                            label="bar"
+                                        />
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
-                    </div>
                 </div>
 
                 {!loading && bares.length === 0 && (
@@ -126,8 +148,12 @@ export default function ClientesPage() {
 
             <ModalCadastroBar 
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedBar(null);
+                }}
                 onSucess={fetchData}
+                selectedBar={selectedBar}
             />
         </div>
     );
