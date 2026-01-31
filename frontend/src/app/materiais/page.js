@@ -57,7 +57,7 @@ export default function MateriaisPage() {
             
             <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
                 <div>
-                    <h1 className="text-xl md:text-2xl font-bold text-white">Materiais (Insumos)</h1>
+                    <h1 className="text-xl md:text-2xl font-bold text-white">Materiais</h1>
                     <p className="text-slate-400 text-xs md:text-sm">Controle de estoque e custos de operação</p>
                 </div>
 
@@ -112,7 +112,7 @@ export default function MateriaisPage() {
                     <table className="w-full text-left border-collapse min-w-[750px]">
                         <thead className="bg-slate-800/50 text-slate-300 text-[11px] md:text-xs uppercase tracking-widest border-b border-slate-700">
                             <tr>
-                                <th className="p-5 font-bold">Material / Medida</th>
+                                <th className="p-5 font-bold">Material</th>
                                 <th className="p-5 font-bold text-center">Quantidade</th>
                                 <th className="p-5 font-bold">Custo Unitário</th>
                                 <th className="p-5 font-bold text-center">Ações</th>

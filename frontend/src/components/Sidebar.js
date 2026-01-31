@@ -1,11 +1,31 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Home, Users, Store, Package, Settings, LogOut, Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Home, Users, Store, Package, Settings, LogOut, LogIn, Menu, X } from 'lucide-react';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const router = useRouter();
+
     const toggleSidebar = () => setIsOpen(!isOpen);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        setIsLoggedIn(!!token);
+    }, []);
+
+    const handleAuthAction = () => {
+        if (isLoggedIn) {
+            localStorage.removeItem('token');
+            setIsLoggedIn(false);
+            router.push('/login')
+        } else {
+            router.push('/login');
+        }
+        setIsOpen(false)
+    }
 
     const menuItems = [
         { name: 'Homepage', icon: <Home size={20} />, href: '/' },
@@ -59,9 +79,25 @@ export default function Sidebar() {
                 </nav>
 
                 <div className="p-4 border-t border-slate-800">
-                    <button className="flex items-center gap-3 p-3 w-full text-red-400 hover:bg-red-900/20 rounded-xl transition-colors cursor-pointer">
-                        <LogOut size={20} />
-                        <span className="font-medium text-sm md:text-base">Sair</span>
+                    <button 
+                        onClick={handleAuthAction}
+                        className={`flex items-center gap-3 p-3 w-full rounded-xl transition-colors cursor-pointer ${
+                            isLoggedIn 
+                            ? 'text-red-400 hover:bg-red-900/20' 
+                            : 'text-emerald-400 hover:bg-emerald-900/20'
+                        }`}
+                    >
+                        {isLoggedIn ? (
+                            <>
+                                <LogOut size={20} />
+                                <span className="font-medium text-sm md:text-base">Sair</span>
+                            </>
+                        ) : (
+                            <>
+                                <LogIn size={20} />
+                                <span className="font-medium text-sm md:text-base">Entrar</span>
+                            </>
+                        )}
                     </button>
                 </div>
             </aside>

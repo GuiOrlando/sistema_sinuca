@@ -1,17 +1,18 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { createEstabelecimento, updateEstabelecimento } from '@/services/api';
-import { X, Store, Phone, User, MapPin, DollarSign, Save } from 'lucide-react';
-import { PatternFormat, NumericFormat } from 'react-number-format';
+import { useEffect, useState } from "react";
+import { createEstabelecimento, updateEstabelecimento } from "@/services/api";
+import { X, Store, Phone, User, MapPin, DollarSign, Save, Hash } from 'lucide-react';
+import { PatternFormat, NumericFormat } from "react-number-format";
 
 export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBar }) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        nome_fantasia: '', 
-        responsavel_nome: '', 
-        telefone: '', 
-        endereco: '', 
-        valor_mensalidade: ''
+        nome_fantasia: '',
+        responsavel_nome: '',
+        telefone: '',
+        endereco: '',
+        valor_mensalidade: '',
+        quantidade_mesas: ''
     });
 
     useEffect(() => {
@@ -21,10 +22,18 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
                 responsavel_nome: selectedBar.responsavel_nome || '',
                 telefone: selectedBar.telefone || '',
                 endereco: selectedBar.endereco || '',
-                valor_mensalidade: selectedBar.valor_mensalidade || ''
+                valor_mensalidade: selectedBar.valor_mensalidade || '',
+                quantidade_mesas: selectedBar.quantidade_mesas || ''
             });
         } else {
-            setFormData({ nome_fantasia: '', responsavel_nome: '', telefone: '', endereco: '', valor_mensalidade: '' });
+            setFormData({
+                nome_fantasia: '',
+                responsavel_nome: '',
+                telefone: '',
+                endereco: '',
+                valor_mensalidade: '',
+                quantidade_mesas: ''
+            });
         }
     }, [selectedBar, isOpen]);
 
@@ -44,7 +53,7 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
         } catch (err) {
             alert(err.message || "Erro ao salvar bar");
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     };
 
@@ -60,7 +69,7 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 overflow-y-auto">
+                <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 overflow-y-auto max-h-[80vh]">
                     <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-400 uppercase">Nome Fantasia</label>
                         <div className="relative">
@@ -76,7 +85,7 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1">
                             <label className="text-xs font-semibold text-slate-400 uppercase">Responsável</label>
                             <div className="relative">
@@ -109,33 +118,53 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm text-slate-400 mb-1">Endereço</label>
+                    <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase">Endereço</label>
                         <div className="relative">
                             <MapPin className="absolute left-3 top-3 text-slate-500" size={18} />
                             <input 
                                 required 
-                                className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 pl-10 text-white outline-none focus:border-blue-500 transition-all"
+                                className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none"
+                                placeholder="Rua, Número, Bairro..."
                                 value={formData.endereco}
                                 onChange={(e) => setFormData({...formData, endereco: e.target.value})}
                             />
                         </div>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-400 uppercase">Valor da Mensalidade</label>
-                        <div className="relative">
-                            <DollarSign className="absolute left-3 top-3 text-emerald-500" size={18} />
-                            <NumericFormat
-                                thousandSeparator="."
-                                decimalSeparator=","
-                                prefix="R$ "
-                                decimalScale={2}
-                                fixedDecimalScale
-                                className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none"
-                                value={formData.valor_mensalidade}
-                                onValueChange={(values) => setFormData({...formData, valor_mensalidade: values.value})}
-                            />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-400 uppercase">Mensalidade</label>
+                            <div className="relative">
+                                <DollarSign className="absolute left-3 top-3 text-emerald-500" size={18} />
+                                <NumericFormat
+                                    thousandSeparator="."
+                                    decimalSeparator=","
+                                    prefix="R$ "
+                                    decimalScale={2}
+                                    fixedDecimalScale
+                                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none"
+                                    value={formData.valor_mensalidade}
+                                    onValueChange={(values) => setFormData({...formData, valor_mensalidade: values.value})}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-400 uppercase">Qtd. de Mesas</label>
+                            <div className="relative">
+                                <Hash className="absolute left-3 top-3 text-blue-500" size={18} />
+                                <input
+                                    required={!selectedBar}
+                                    disabled={!!selectedBar}
+                                    type="number"
+                                    min="0"
+                                    className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none disabled:opacity-50"
+                                    placeholder="Ex: 4"
+                                    value={formData.quantidade_mesas}
+                                    onChange={(e) => setFormData({...formData, quantidade_mesas: e.target.value})}
+                                />
+                            </div>
                         </div>
                     </div>
 
