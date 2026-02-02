@@ -129,3 +129,17 @@ export const updateInsumo = async (id, dados) => {
     }
     return response.json();
 };
+
+export const updateBarInsumos = async (barId, dados) => {
+    const response = await fetch(`${API_URL}/estabelecimentos/${barId}/insumos`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify(dados),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao registrar entrega de materiais');
+    }
+    return response.json();
+}

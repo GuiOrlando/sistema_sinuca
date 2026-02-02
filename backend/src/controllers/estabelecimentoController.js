@@ -93,3 +93,58 @@ exports.excluirBar = async (req, res) => {
         res.status(500).json({ error: "Erro ao excluir bar" });
     }
 };
+
+exports.registrarEntrega = async (req, res) => {
+    const barId = req.params.id;
+    const { insumos } = req.body;
+
+    if (!insumos || insumos.length === 0) {
+        return res.status(400).json({ error: "Nenhum material selecionado." });
+    }
+
+    try {
+        const valores = insumos.map(item => [
+            barId,
+            item.id,
+            item.quantidade,
+            new Date()
+        ]);
+
+        const sql = "INSERT INTO entregas_insumos (id_estabelecimento, id_insumo, quantidade, data_entrega) VALUES ?";
+        
+        await db.query(sql, [valores]);
+
+        res.status(201).json({ message: "Entrega registrada com sucesso!" });
+    } catch (error) {
+        console.error("Erro no DB:", error);
+        res.status(500).json({ error: "Erro ao salvar entrega no banco de dados." });
+    }
+};
+
+exports.listarBares = async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                e.*, 
+                COUNT(DISTINCT m.id) as total_mesas,
+                (
+                    SELECT GROUP_CONCAT(CONCAT(i.nome, ' (', total_qtd, ')') SEPARATOR ', ')
+                    FROM (
+                        SELECT id_estabelecimento, id_insumo, SUM(quantidade) as total_qtd 
+                        FROM entregas_insumos 
+                        GROUP BY id_estabelecimento, id_insumo
+                    ) AS subquery
+                    JOIN insumos i ON subquery.id_insumo = i.id
+                    WHERE subquery.id_estabelecimento = e.id
+                ) as materiais_entregues
+            FROM estabelecimentos e
+            LEFT JOIN mesas m ON e.id = m.id_estabelecimento
+            GROUP BY e.id
+        `;
+        const [rows] = await db.query(query);
+        res.json(rows);
+    } catch (error) {
+        console.error("Erro SQL:", error.message);
+        res.status(500).json({ error: "Erro ao buscar bares" });
+    }
+};
