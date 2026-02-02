@@ -67,7 +67,7 @@ export default function LoginPage() {
               <button
                 type='button'
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors cursor-pointer"
               >
                 {showPassword ? (
                   <EyeOff size={20} />
@@ -80,7 +80,7 @@ export default function LoginPage() {
 
           <button 
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98]"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg shadow-blue-900/20 active:scale-[0.98] cursor-pointer"
           >
             Entrar no Painel
           </button>
