@@ -13,9 +13,9 @@ export default function RootLayout({ children }) {
     <html lang="pt-br">
       <head>
         <title>SinuControl</title>
-        <link rel="icon" href="/logo-sc.jpg" />
-        <link rel="shortcut icon" href="/logo-sc.jpg" />
-        <link rel="apple-touch-icon" href="/logo-sc.jpg" />
+        <link rel="icon" href="/bola8.png" />
+        <link rel="shortcut icon" href="/bola8.png" />
+        <link rel="apple-touch-icon" href="/bola8.png" />
       </head>
       <body className={`flex bg-background text-foreground antialiased ${isLoginPage ? 'justify-center items-center' : ''}`}>
         {!isLoginPage && <Sidebar />}
