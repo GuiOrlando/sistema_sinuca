@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 import { login } from '@/services/api';
+import Link from 'next/link';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -84,6 +85,15 @@ export default function LoginPage() {
           >
             Entrar no Painel
           </button>
+
+          <div className='text-center'>
+            <p className='text-slate-400 text-sm'>
+              Não tem uma conta?{' '}
+              <Link href="/registro" className='text-blue-500 hover:underline'>
+                Registre-se aqui
+              </Link>
+            </p>
+          </div>
         </form>
 
         <p className="mt-8 text-center text-xs text-slate-500">

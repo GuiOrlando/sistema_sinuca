@@ -7,15 +7,15 @@ import './globals.css';
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const isLoginPage = pathname === '/login';
+  const isLoginPage = pathname === '/login' || pathname === '/registro';
 
   return (
     <html lang="pt-br">
       <head>
         <title>SinuControl</title>
-        <link rel="icon" href="/bola8.png" />
-        <link rel="shortcut icon" href="/bola8.png" />
-        <link rel="apple-touch-icon" href="/bola8.png" />
+        <link rel="icon" href="/bola1.png" />
+        <link rel="shortcut icon" href="/bola1.png" />
+        <link rel="apple-touch-icon" href="/bola1.png" />
       </head>
       <body className={`flex bg-background text-foreground antialiased ${isLoginPage ? 'justify-center items-center' : ''}`}>
         {!isLoginPage && <Sidebar />}
