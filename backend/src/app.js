@@ -9,11 +9,13 @@ const authRoutes = require('./routes/authRoutes');
 const estabelecimentoRoutes = require('./routes/estabelecimentoRoutes');
 const dashboardRoutes = require('./routes/dashboard');
 const insumosRoutes = require('./routes/insumos');
+const pagamentoRoutes = require('./routes/pagamentoRoutes');
 
 app.use(cors());
 app.use(express.json());
 
-app.use('/auth', authRoutes)
+app.use('/auth', authRoutes);
+app.use('/pagamentos', pagamentoRoutes);
 app.use('/estabelecimentos', estabelecimentoRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/insumos', insumosRoutes);

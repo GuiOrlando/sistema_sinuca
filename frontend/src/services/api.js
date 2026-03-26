@@ -143,3 +143,48 @@ export const updateBarInsumos = async (barId, dados) => {
     }
     return response.json();
 }
+
+//Pagamentos API functions
+export const getPagamentos = async () => {
+    try {
+        const response = await fetch(`${API_URL}/pagamentos`, {
+            headers: getAuthHeader(),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Acesso negado aos pagamentos');
+        }
+        
+        return Array.isArray(data) ? data : [];
+    } catch (error) {
+        console.error("Erro na requisição:", error.message);
+        throw error;
+    }
+};
+
+export const createPagamento = async (dados) => {
+    const response = await fetch(`${API_URL}/pagamentos`, {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify(dados),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao criar pagamento');
+    }
+    return response.json();
+};
+
+export const updatePagamentoStatus = async (id, status) => {
+    const response = await fetch(`${API_URL}/pagamentos/${id}/status`, {
+        method: 'PATCH',
+        headers: getAuthHeader(),
+        body: JSON.stringify({ status }),
+    });
+
+    if (!response.ok) throw new Error('Erro ao atualizar status do pagamento');
+    return response.json();
+};

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Home, Users, Store, Package, Settings, LogOut, LogIn, Menu, X } from 'lucide-react';
+import { Home, Users, Store, Package, Settings, LogOut, LogIn, Menu, X, DollarSign } from 'lucide-react';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -32,6 +32,7 @@ export default function Sidebar() {
         { name: 'Clientes', icon: <Users size={20} />, href: '/clientes' },
         { name: 'Bares', icon: <Store size={20} />, href: '/bares' },
         { name: 'Materiais', icon: <Package size={20} />, href: '/materiais' },
+        { name: 'Pagamentos', icon: <DollarSign size={20} />, href: '/pagamentos' },
         { name: 'Configurações', icon: <Settings size={20} />, href: '/configuracoes' },
     ];
 
