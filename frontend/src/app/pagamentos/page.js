@@ -30,14 +30,15 @@ export default function PagamentosPage() {
     };
 
     return (
-        <div className="min-h-screen bg-[#0f172a] text-white p-2">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+        <div className="p-4 md:p-6 pt-11 md:pt-6 min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-[#0f172a]">
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Pagamentos</h1>
-                    <p className="text-slate-400 mt-1">Gestão de mensalidades e recebimentos.</p>
+                    <h1 className="text-xl md:text-2xl font-bold text-white">Pagamentos</h1>
+                    <p className="text-slate-400 text-xs md:text-sm">Gestão de mensalidades e recebimentos.</p>
                 </div>
-                <button className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-2xl flex items-center gap-2 transition-all font-bold shadow-lg shadow-blue-600/20">
-                    <Plus size={20} /> Registrar Novo
+                <button className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-blue-900/20 cursor-pointer">
+                    <Plus size={20} />
+                    <span className="font-semibold text-sm">Registrar Novo</span>
                 </button>
             </header>
 
