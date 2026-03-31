@@ -8,6 +8,8 @@ export default function PagamentosPage() {
     const [pagamentos, setPagamentos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [filtroNome, setFiltroNome] = useState('');
+    const [filtroData, setFiltroData] = useState('');
 
     const carregarDados = async () => {
         setLoading(true);
@@ -15,7 +17,7 @@ export default function PagamentosPage() {
             const dados = await getPagamentos();
             setPagamentos(dados);
         } catch (error) {
-            console.error("Erro ao carregar pagamentos:", error.message);
+            console.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -30,7 +32,7 @@ export default function PagamentosPage() {
                 alert(error.message);
             }
         }
-    }
+    };
 
     useEffect(() => {
         carregarDados();
@@ -43,6 +45,15 @@ export default function PagamentosPage() {
             default: return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
         }
     };
+
+    const pagamentosFiltrados = pagamentos.filter((pgto) => {
+        const nomeBar = pgto.nome_bar?.toLowerCase() || "";
+        const termoBusca = filtroNome.toLowerCase();
+        const dataVencimento = pgto.data_vencimento.split('T')[0];
+        const atendeNome = nomeBar.includes(termoBusca);
+        const atendeData = filtroData ? dataVencimento === filtroData : true;
+        return atendeNome && atendeData;
+    });
 
     return (
         <div className="p-4 md:p-6 pt-11 md:pt-6 min-h-screen w-full bg-[#0f172a]">
@@ -60,25 +71,53 @@ export default function PagamentosPage() {
                 </button>
             </header>
 
+            <div className='flex flex-col md:flex-row gap-4 mb-6'>
+                <div className='flex-1'>
+                    <input
+                        type='text'
+                        placeholder='Buscar por nome do bar...'
+                        value={filtroNome}
+                        onChange={(e) => setFiltroNome(e.target.value)}
+                        className="w-full bg-[#1e293b] border border-slate-700 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                    />
+                </div>
+
+                <div className='w-full md:w-48'>
+                    <input
+                        type='date'
+                        value={filtroData}
+                        onChange={(e) => setFiltroData(e.target.value)}
+                        className="w-full bg-[#1e293b] border border-slate-700 text-white px-4 py-2.5 rounded-xl focus:outline-none focus:border-blue-500 transition-colors text-sm"
+                    />
+                </div>
+
+                {(filtroNome || filtroData) && (
+                    <button
+                        onClick={() => { setFiltroNome(''); setFiltroData(''); }}
+                        className="text-slate-400 hover:text-white text-xs font-medium transition-colors"
+                    >
+                        Limpar Filtros
+                    </button>
+                )}
+            </div>
+
             <div className="grid grid-cols-1 gap-4">
                 {loading ? (
                     <div className="text-slate-500 text-center py-10">Carregando dados...</div>
-                ) : (
-                    pagamentos.map((pgto) => (
-                        <div key={pgto.id} className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-slate-500 transition-colors">                        
+                ) : pagamentosFiltrados.length > 0 ? (
+                    pagamentosFiltrados.map((pgto) => (
+                        <div key={pgto.id} className="bg-[#1e293b] border border-slate-700/50 rounded-2xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-6 hover:border-slate-500 transition-colors group">                        
                             <div className="flex items-center gap-4">
                                 <div className="p-4 bg-[#0f172a] rounded-2xl text-blue-400 border border-slate-700">
                                     <Store size={24} />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-white">{pgto.nome_bar || `Bar ID: ${pgto.id_estabelecimento}`}</h3>
-                                    
                                     <div className="space-y-1 mt-1">
                                         <div className="flex items-center gap-2 text-slate-400 text-sm">
                                             <Calendar size={14} />
                                             Vencimento: {new Date(pgto.data_vencimento).toLocaleDateString('pt-BR')}
                                         </div>
-
                                         {pgto.data_pagamento && (
                                             <div className="flex items-center gap-2 text-emerald-400 text-sm font-medium">
                                                 <CheckCircle2 size={14} />
@@ -89,27 +128,32 @@ export default function PagamentosPage() {
                                 </div>
                             </div>
 
-                            <div className="flex flex-row md:flex-col items-center md:items-end justify-between gap-2">
-                                <span className="text-2xl font-black text-white">
-                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pgto.valor)}
-                                </span>
-                                <span className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${getStatusStyle(pgto.status)}`}>
-                                    {pgto.status === 'Pago' && <CheckCircle2 size={14} />}
-                                    {pgto.status === 'Atrasado' && <AlertCircle size={14} />}
-                                    {pgto.status === 'Pendente' && <Clock size={14} />}
-                                    {pgto.status}
-                                </span>
+                            <div className="flex flex-row md:flex-col items-center md:items-end justify-between gap-4">
+                                <div className="flex flex-col items-center md:items-end">
+                                    <span className="text-2xl font-black text-white">
+                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pgto.valor)}
+                                    </span>
+                                    <span className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full border ${getStatusStyle(pgto.status)}`}>
+                                        {pgto.status === 'Pago' && <CheckCircle2 size={14} />}
+                                        {pgto.status === 'Atrasado' && <AlertCircle size={14} />}
+                                        {pgto.status === 'Pendente' && <Clock size={14} />}
+                                        {pgto.status}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => handleExcluir(pgto.id)}
+                                    className="p-2 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                                    title='Excluir'
+                                >
+                                    <Trash2 size={18} />
+                                </button>
                             </div>
-
-                            <button
-                                onClick={() => handleExcluir(pgto.id)}
-                                className="p-2 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
-                                title='Excluir'
-                            >
-                                <Trash2 size={18} />
-                            </button>
                         </div>                        
                     ))
+                ) : (
+                    <div className="text-slate-400 text-center py-10 border border-dashed border-slate-700 rounded-2xl">
+                        Nenhum pagamento encontrado com os filtros aplicados.
+                    </div>
                 )}
             </div>
 
