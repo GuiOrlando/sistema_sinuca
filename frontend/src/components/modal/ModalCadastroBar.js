@@ -155,8 +155,7 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
                             <div className="relative">
                                 <Hash className="absolute left-3 top-3 text-blue-500" size={18} />
                                 <input
-                                    required={!selectedBar}
-                                    disabled={!!selectedBar}
+                                    required
                                     type="number"
                                     min="0"
                                     className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none disabled:opacity-50"

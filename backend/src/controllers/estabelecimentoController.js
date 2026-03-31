@@ -55,13 +55,45 @@ exports.cadastrarBar = async (req, res) => {
 
 exports.atualizarBar = async (req, res) => {
     const { id } = req.params;
-    const { nome_fantasia, responsavel_nome, telefone, endereco, valor_mensalidade, insumos } = req.body;
+    const { nome_fantasia, responsavel_nome, telefone, endereco, valor_mensalidade, quantidade_mesas, insumos } = req.body;
     
     try {
         const [result] = await db.query(
             'UPDATE estabelecimentos SET nome_fantasia = ?, responsavel_nome = ?, telefone = ?, endereco = ?, valor_mensalidade = ? WHERE id = ?',
             [nome_fantasia, responsavel_nome, telefone, endereco, valor_mensalidade, id]
         );
+
+        if (quantidade_mesas !== undefined) {
+            const novaQtd = Number(quantidade_mesas);
+            
+            const [mesasAtuais] = await db.query(
+                'SELECT id FROM mesas WHERE id_estabelecimento = ? ORDER BY id ASC', 
+                [id]
+            );
+            
+            const qtdAtual = mesasAtuais.length;
+
+            if (novaQtd > qtdAtual) {
+                const mesasParaAdicionar = [];
+                for (let i = qtdAtual + 1; i <= novaQtd; i++) {
+                    mesasParaAdicionar.push([`MESA-${id}-${i}`, 'Padrão', id]);
+                }
+                
+                await db.query(
+                    'INSERT INTO mesas (numero_serie, modelo, id_estabelecimento) VALUES ?',
+                    [mesasParaAdicionar]
+                );
+            } 
+            else if (novaQtd < qtdAtual) {
+                const diff = qtdAtual - novaQtd;
+                const idsParaRemover = mesasAtuais.slice(-diff).map(m => m.id);
+                
+                await db.query(
+                    'DELETE FROM mesas WHERE id IN (?)',
+                    [idsParaRemover]
+                );
+            }
+        }
 
         if (insumos && Array.isArray(insumos) && insumos.length > 0) {
             const insumosArray = insumos.map(idInsumo => [id, idInsumo, 1, new Date()]);
@@ -72,9 +104,9 @@ exports.atualizarBar = async (req, res) => {
         }
 
         if (result.affectedRows === 0) return res.status(404).json({ error: "Não encontrado" });
-        res.json({ message: "Bar atualizado com sucesso!" });
+        res.json({ message: "Bar e mesas atualizados com sucesso!" });
     } catch (error) {
-        console.error(error);
+        console.error("Erro ao atualizar:", error);
         res.status(500).json({ error: "Erro ao atualizar bar" });
     }
 };

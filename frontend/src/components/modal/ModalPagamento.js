@@ -26,6 +26,20 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
         }
     }, [isOpen]);
 
+    const handleSelectBar = (idSelecionado) => {
+        const barSelecionado = estabelecimentos.find(bar => String(bar.id) === String(idSelecionado));
+
+        if (barSelecionado) {
+            setFormData({
+                ...formData,
+                id_estabelecimento: idSelecionado,
+                valor: barSelecionado.valor_mensalidade || ''
+            });
+        } else {
+            setFormData({ ...formData, id_estabelecimento: '', valor: '' });
+        }
+    };
+
     if (!isOpen) return null;
 
     const handleSubmit = async (e) => {
@@ -67,7 +81,7 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
                                 required
                                 className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all appearance-none"
                                 value={formData.id_estabelecimento}
-                                onChange={(e) => setFormData({...formData, id_estabelecimento: e.target.value})}
+                                onChange={(e) => handleSelectBar(e.target.value)}
                             >
                                 <option value="" className="bg-[#0f172a]">Selecione o bar pagador...</option>
                                 {estabelecimentos.map(bar => (
