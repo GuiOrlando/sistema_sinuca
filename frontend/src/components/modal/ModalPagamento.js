@@ -45,7 +45,7 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
 
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
-            <div className="bg-[#1e293b] border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-200">
+            <div className="bg-card border border-slate-700 w-full max-w-lg rounded-2xl shadow-2xl animate-in fade-in zoom-in duration-200">
                 
                 <div className="flex justify-between items-center p-6 border-b border-slate-700">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">

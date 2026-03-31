@@ -188,3 +188,22 @@ export const updatePagamentoStatus = async (id, status) => {
     if (!response.ok) throw new Error('Erro ao atualizar status do pagamento');
     return response.json();
 };
+
+export const deletePagamento = async (id) => {
+    try {
+        const response = await fetch(`${API_URL}/pagamentos/${id}`, {
+            method: 'DELETE',
+            headers: getAuthHeader(),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erro ao excluir pagamento');
+        }
+
+        return response.json();
+    } catch (error) {
+        console.error("Erro na requisição de exclusão:", error.message);
+        throw error;
+    }
+};

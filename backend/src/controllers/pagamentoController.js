@@ -52,3 +52,21 @@ exports.criarPagamento = async (req, res) => {
         return res.status(500).json({ error: "Erro ao registrar no banco de dados" });
     }
 };
+
+exports.excluirPagamento = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const query = "UPDATE pagamentos SET ativo = 0 WHERE id = ?";
+        const [result] = await db.query(query, [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Pagamento não encontrado" });
+        }
+
+        return res.json({ message: "Pagamento removido com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao excluir pagamento:", error.message);
+        return res.status(500).json({ error: "Erro interno ao excluir pagamento" });
+    }
+}

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { DollarSign, Calendar, CheckCircle2, Clock, AlertCircle, Store, Plus } from 'lucide-react';
-import { getPagamentos } from '@/services/api';
+import { DollarSign, Calendar, CheckCircle2, Clock, AlertCircle, Store, Plus, Trash2 } from 'lucide-react';
+import { getPagamentos, deletePagamento } from '@/services/api';
 import ModalNovoPagamento from '@/components/modal/ModalPagamento';
 
 export default function PagamentosPage() {
@@ -20,6 +20,17 @@ export default function PagamentosPage() {
             setLoading(false);
         }
     };
+
+    const handleExcluir = async (id) => {
+        if (confirm("Tem certeza que deseja remover esse pagamento?")) {
+            try {
+                await deletePagamento(id);
+                await carregarDados();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+    }
 
     useEffect(() => {
         carregarDados();
@@ -89,6 +100,14 @@ export default function PagamentosPage() {
                                     {pgto.status}
                                 </span>
                             </div>
+
+                            <button
+                                onClick={() => handleExcluir(pgto.id)}
+                                className="p-2 text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
+                                title='Excluir'
+                            >
+                                <Trash2 size={18} />
+                            </button>
                         </div>                        
                     ))
                 )}
