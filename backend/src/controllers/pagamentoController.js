@@ -7,12 +7,16 @@ exports.listarPagamentos = async (req, res) => {
                 p.id, 
                 p.valor, 
                 p.data_vencimento, 
-                p.data_pagamento, -- Adicionado para mostrar no front
-                p.status, 
-                e.nome_fantasia AS nome_bar
+                p.data_pagamento,
+                CASE 
+                    WHEN p.status = 'Pendente' AND p.data_vencimento < CURDATE() THEN 'Atrasado'
+                    ELSE p.status 
+                END AS status,
+                e.nome_fantasia AS nome_bar,
+                p.id_estabelecimento
             FROM pagamentos p
             JOIN estabelecimentos e ON p.id_estabelecimento = e.id
-            WHERE p.ativo = 1 -- Filtra apenas os que não foram "excluídos"
+            WHERE p.ativo = 1
             ORDER BY p.data_vencimento DESC
         `;
         
@@ -70,3 +74,64 @@ exports.excluirPagamento = async (req, res) => {
         return res.status(500).json({ error: "Erro interno ao excluir pagamento" });
     }
 }
+
+exports.atualizarStatusPagamento = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    try {
+        let query;
+        let params;
+
+        if (status === 'Pago') {
+            const hoje = new Date().toISOString().split('T')[0];
+            query = "UPDATE pagamentos SET status = ?, data_pagamento = ? WHERE id = ?";
+            params = [status, hoje, id];
+        } else {
+            query = "UPDATE pagamentos SET status = ? WHERE id = ?";
+            params = [status, id];
+        }
+
+        const [result] = await db.query(query, params);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Pagamento não encontrado" });
+        }
+
+        return res.json({ message: "Status atualizado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao atualizar status:", error.message);
+        return res.status(500).json({ error: "Erro interno ao atualizar status" });
+    }
+};
+
+exports.editarPagamento = async (req, res) => {
+    const { id } = req.params;
+    const { id_estabelecimento, valor, data_vencimento, data_pagamento, status } = req.body;
+
+    try {
+        const query = `
+            UPDATE pagamentos 
+            SET id_estabelecimento = ?, valor = ?, data_vencimento = ?, data_pagamento = ?, status = ?
+            WHERE id = ?
+        `;
+        
+        const [result] = await db.query(query, [
+            id_estabelecimento, 
+            valor, 
+            data_vencimento, 
+            data_pagamento || null, 
+            status, 
+            id
+        ]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Pagamento não encontrado" });
+        }
+
+        return res.json({ message: "Pagamento atualizado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao editar pagamento:", error);
+        return res.status(500).json({ error: "Erro interno ao editar pagamento" });
+    }
+};

@@ -179,13 +179,27 @@ export const createPagamento = async (dados) => {
 };
 
 export const updatePagamentoStatus = async (id, status) => {
-    const response = await fetch(`${API_URL}/pagamentos/${id}/status`, {
+    const response = await fetch(`${API_URL}/pagamentos/${id}`, {
         method: 'PATCH',
         headers: getAuthHeader(),
         body: JSON.stringify({ status }),
     });
 
     if (!response.ok) throw new Error('Erro ao atualizar status do pagamento');
+    return response.json();
+};
+
+export const updatePagamento = async (id, dados) => {
+    const response = await fetch(`${API_URL}/pagamentos/${id}`, {
+        method: 'PUT',
+        headers: getAuthHeader(),
+        body: JSON.stringify(dados),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erro ao atualizar pagamento');
+    }
     return response.json();
 };
 

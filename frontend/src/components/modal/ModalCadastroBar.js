@@ -141,6 +141,7 @@ export default function ModalCadastroBar({ isOpen, onClose, onSucess, selectedBa
                                     thousandSeparator="."
                                     decimalSeparator=","
                                     prefix="R$ "
+                                    placeholder="R$ 100,00"
                                     decimalScale={2}
                                     fixedDecimalScale
                                     className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none"

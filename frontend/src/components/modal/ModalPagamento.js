@@ -40,8 +40,6 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
         }
     };
 
-    if (!isOpen) return null;
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -56,6 +54,10 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
             setLoading(false);
         }
     };
+
+    if (!isOpen) return null;
+
+    const statusOptions = ['Pendente', 'Pago', 'Atrasado'];
 
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
@@ -102,6 +104,7 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
                                     thousandSeparator="."
                                     decimalSeparator=","
                                     prefix="R$ "
+                                    placeholder="R$ 100,00"
                                     decimalScale={2}
                                     fixedDecimalScale
                                     required
@@ -128,6 +131,31 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
                     </div>
 
                     <div className="space-y-1">
+                        <label className="text-xs font-semibold text-slate-400 uppercase">Status Inicial</label>
+                        <div className="flex flex-wrap gap-4 bg-[#0f172a] border border-slate-700 rounded-xl p-3">
+                            {statusOptions.map((option) => (
+                                <label key={option} className="flex items-center gap-2 cursor-pointer group">
+                                    <input 
+                                        type="radio"
+                                        name="status"
+                                        value={option}
+                                        checked={formData.status === option}
+                                        onChange={(e) => setFormData({
+                                            ...formData, 
+                                            status: e.target.value,
+                                            data_pagamento: e.target.value === 'Pago' ? formData.data_pagamento : ''
+                                        })}
+                                        className="w-4 h-4 text-blue-600 bg-[#0f172a] border-slate-600 focus:ring-blue-500"
+                                    />
+                                    <span className={`text-sm ${formData.status === option ? 'text-white font-bold' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                                        {option}
+                                    </span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="space-y-1">
                         <label className="text-xs font-semibold text-slate-400 uppercase">Data do Recebimento (Se já foi pago)</label>
                         <div className="relative">
                             <CheckCircle2 className={`absolute left-3 top-3 ${formData.status === 'Pago' ? 'text-emerald-500' : 'text-slate-600'}`} size={18} />
@@ -138,29 +166,6 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
                                 value={formData.data_pagamento}
                                 onChange={(e) => setFormData({...formData, data_pagamento: e.target.value})}
                             />
-                        </div>
-                    </div>
-
-                    <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-400 uppercase">Status Inicial</label>
-                        <div className="relative">
-                            <CheckCircle2 className="absolute left-3 top-3 text-blue-500" size={18} />
-                            <select 
-                                className="w-full bg-[#0f172a] border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all appearance-none"
-                                value={formData.status}
-                                onChange={(e) => {
-                                    const newStatus = e.target.value;
-                                    setFormData({
-                                        ...formData, 
-                                        status: newStatus,
-                                        data_pagamento: newStatus === 'Pago' ? formData.data_pagamento : ''
-                                    });
-                                }}
-                            >
-                                <option value="Pendente">Pendente</option>
-                                <option value="Pago">Pago</option>
-                                <option value="Atrasado">Atrasado</option>
-                            </select>
                         </div>
                     </div>
 
