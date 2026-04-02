@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState } from "react";
-import { getEstabelecimentos, createPagamento } from "@/services/api";
+import { getEstabelecimentos, createPagamento, updatePagamento } from "@/services/api";
 import { X, DollarSign, Calendar, Store, Save, CheckCircle2 } from 'lucide-react';
 import { NumericFormat } from "react-number-format";
 
-export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
+export default function ModalNovoPagamento({ isOpen, onClose, onSave, dadosEdicao }) {
     const [estabelecimentos, setEstabelecimentos] = useState([]);
     const [loading, setLoading] = useState(false);
     
@@ -23,12 +23,23 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
             getEstabelecimentos()
                 .then(setEstabelecimentos)
                 .catch(err => console.error("Erro ao carregar bares:", err));
+
+            if (dadosEdicao) {
+                setFormData({
+                    id_estabelecimento: dadosEdicao.id_estabelecimento,
+                    valor: dadosEdicao.valor,
+                    data_vencimento: dadosEdicao.data_vencimento?.split('T')[0] || '',
+                    data_pagamento: dadosEdicao.data_pagamento?.split('T')[0] || '',
+                    status: dadosEdicao.status
+                });
+            } else {
+                setFormData(initialState);
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, dadosEdicao]);
 
     const handleSelectBar = (idSelecionado) => {
         const barSelecionado = estabelecimentos.find(bar => String(bar.id) === String(idSelecionado));
-
         if (barSelecionado) {
             setFormData({
                 ...formData,
@@ -43,13 +54,33 @@ export default function ModalNovoPagamento({ isOpen, onClose, onSave }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const dataVenc = new Date(formData.data_vencimento);
+        dataVenc.setHours(0, 0, 0, 0);
+
+        let statusFinal = formData.status;
+        
+        if (statusFinal !== 'Pago') {
+            statusFinal = dataVenc < hoje ? 'Atrasado' : 'Pendente';
+        }
+
+        const dadosParaEnviar = {
+            ...formData,
+            status: statusFinal
+        };
+
         try {
-            await createPagamento(formData);
+            if (dadosEdicao?.id) {
+                await updatePagamento(dadosEdicao.id, dadosParaEnviar);
+            } else {
+                await createPagamento(dadosParaEnviar);
+            }
             onSave();
             onClose();
-            setFormData(initialState);
         } catch (err) {
-            alert(err.message || "Erro ao registrar pagamento");
+            alert(err.message || "Erro ao salvar pagamento");
         } finally {
             setLoading(false);
         }
